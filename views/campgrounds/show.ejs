@@ -1,0 +1,267 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+    <% include ../partials/flash %>
+    <div class="row">
+    
+        <div class="col-md-9">
+            <div class="thumbnail">
+                <img class="img-responsive" src="<%= campground.image %>">
+                <div class="caption">
+                    <h4 class="pull-right">$<%= campground.price %>/night</h4>
+                    <h4><a href="#"><%= campground.name %></a></h4>
+                    <p><%= campground.description %></p>
+                    <p>
+                        <em></e>Submitted By <a href="/users/<%= campground.author.id%>/profile"><%= campground.author.username %></a>, <%= moment(campground.createdAt).fromNow() %></em>
+                    </p>
+                    <% if(currentUser && campground.author.id.equals(currentUser._id)) {%>
+                        <a class="btn btn-ss btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+                        <form class="delete-form" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-ss btn-danger">Delete</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div class="thumbnail">
+                <div id="review-wrapper" class="caption">
+                        <p>
+                            <span class="fas fa-star icon-sm checked"></span></span>
+                            <span class= <% if(campground.rating > 1.5) { %> "fas fa-star icon-sm checked" <% } else { %> "far fa-star icon-sm" <% } %>></span>
+                            <span class= <% if(campground.rating > 2.5) { %> "fas fa-star icon-sm checked" <% } else { %> "far fa-star icon-sm" <% } %>></span>
+                            <span class= <% if(campground.rating > 3.5) { %> "fas fa-star icon-sm checked" <% } else { %> "far fa-star icon-sm" <% } %>></span>
+                            <span class= <% if(campground.rating > 4.5) { %> "fas fa-star icon-sm checked" <% } else { %> "far fa-star icon-sm" <% } %>></span>
+                            
+                            <i>(Total reviews: <%= campground.reviews.length %>)</i>
+                        </p>  
+                        <p>Current Campground Rating: <%= campground.rating.toFixed(2) %></p>
+                        <h4>Latest Review for this Campground:</h4>
+                        <hr>
+                        <% if(campground.rating === 0) { %>
+                            <p>No reviews yet..</p>
+                        <% } else { %>
+                        <div id="rating-list" class="row">
+                            <div v-for="review in reviews">
+                                <div class="col-md-1">
+                                    <div class="comment-profile-image-wrap">
+                                        <img class="img-circle comment-profile-image" v-bind:src="review.author.id.avatarUrl">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="fas fa-star icon-sm checked"></span>
+                                    <span v-if="review.rating > 1.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
+                                    <span v-if="review.rating > 2.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
+                                    <span v-if="review.rating > 3.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
+                                    <span v-if="review.rating > 4.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
+                                    <span class="timestamp">{{ review.createdAt }}</span>
+                                    <div>Review By: <strong>{{ review.author.username }}</strong></div>
+                                </div>
+                                <div :id="'rating-option' + review._id"  class="col-md-8">
+                                        <p>{{ review.text }}</p>
+                                </div>
+                                <div class="col-md-12">
+                                   <hr> 
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>    
+                    <div class="text-right">
+                        <nav>
+                            <ul v-if="totalPages > 0" id="review-pagination" class="pagination pagination-sm">
+                                <li v-if="currentPage == 1" class="disabled"><a>First</a></li>
+                                <li v-else v-on:click="fetchReviews"><a>First</a></li>
+                                <li v-if="show !== 1"><a>...</a></li>
+                                <template v-for="item in showList">
+                                    <li v-if="item == currentPage" class="active" v-on:click="fetchReviews"><a>{{ item }}</a></li>
+                                    <li v-else v-on:click="fetchReviews"><a>{{ item }}</a></li>
+                                    <li v-if="item == Number(currentPage)+4 && item < totalPages" class="disabled"><a>...</a></li>
+                                </template>
+                                <li v-if="currentPage == totalPages" class="disabled"><a>Last</a></li>
+                                <li v-else v-on:click="fetchReviews"><a>Last</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <a class="btn btn-primary btn-lg" href="/campgrounds/<%= campground._id %>/reviews/new">Write a new review</a>
+                </div>
+            </div>
+            
+            <div class="well comment-well">
+                <button class="btn btn-success pull-right" data-target="#collapseComment" data-toggle="collapse"><span class="glyphicon glyphicon-plus"></span> Add new Comment</button>
+                <h4 class="text-left"><strong>Comment <span class="glyphicon glyphicon-comment"></span></strong></h4>
+                
+                    <div class="collapse" id="collapseComment">
+                        <% if(currentUser) { %>
+                            <div class="panel panel-default well" id="new-comment-panel">
+                                <div class="panel-body">
+                                    <div class="comment-form">
+                                        <h4>Write your Comment <span class="glyphicon glyphicon-pencil"></span></h4>
+                                        <form action="/campgrounds/<%= campground._id %>/comments " method="POST">
+                                            <div class="form-group">
+                                                <input class="form-control" type="text" placeholder="<%= currentUser.username %>" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea id="comment-area" class="form-control" placeholder="Writing a new comment..." name="comment[text]" rows="5" col="70"></textarea>
+                                            </div>
+                                            <button class="btn btn-success">Comment <span class="glyphicon glyphicon-comment white"></span></button>
+                                        </form>
+                                     </div>
+                                </div>
+                            </div>
+                        <% } else { %> 
+                            <div class="alert alert-danger" role="alert">
+                                You need to be logged in to add new comment! <a href="/login">Click here to login.</a>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                <hr>
+                
+                <% campground.comments.forEach(function(comment) { %>
+                    <div class="row comment-row">
+                        <div class="col-md-1 col-sm-1 col-xm-1">
+                            <div class="comment-profile-image-wrap">
+                                <img class="img-circle comment-profile-image" src="<%= comment.author.id.avatarUrl %>">
+                            </div>
+                        </div>
+                        <div class="col-md-11 col-sm-11 col-xm-11 comment-row">
+                            <div>
+                                <strong><%= comment.author.username %></strong>
+                                <span class="timestamp"><%= moment(comment.createdAt).fromNow() %></span>    
+                            </div>
+                            <%= comment.text %>
+                            <% if(currentUser && comment.author.id.equals(currentUser._id)) {%>
+                                <form class="delete-form pull-right clear-buttom-margin" action="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                                <span class="pull-right whitespace"></span>
+                                <button class="btn btn-xs btn-warning pull-right" data-target="#collapseEditcomment<%= comment._id %>" data-toggle="collapse">Edit</button>
+      
+                                <div class="collapse" id="collapseEditcomment<%= comment._id %>">
+                                    <div class="panel panel-default well" id="edit-comment-panel">
+                                        <div class="panel-body">
+                                            <div class="comment-form">
+                                                <h4>Edit your Comment <span class="glyphicon glyphicon-pencil"></span></h4>
+                                                <form action="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>?_method=PUT" method="POST">
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="text" placeholder="<%= currentUser.username %>" disabled>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <textarea id="comment-area" class="form-control" name="comment[text]" rows="5" col="70"><%= comment.text %></textarea>
+                                                    </div>
+                                                    <button class="btn btn-success">Save changes <span class="glyphicon glyphicon-comment white"></span></button>
+                                                </form>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>   
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <p class="lead">Details</p>
+            <div class="list-group">
+                <div class="list-group-item active">Location</div>
+                <div class="list-group-item"><%= campground.location %></div>
+            </div>
+            <div id="map" class="list-group-item"></div>
+        </div>
+        
+    </div>
+</div>
+
+<% include ../partials/footer.ejs %>
+
+<script>
+  function initMap() {
+    var lat = <%= campground.lat %>;
+    var lng = <%= campground.lng %>;
+    var center = {lat: lat, lng: lng };
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: center,
+        scrollwheel: false
+    });
+    var contentString = `
+      <strong><%= campground.name %><br />
+      <%= campground.location %></strong>
+      <p><%= campground.description %></p>
+    `
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    var marker = new google.maps.Marker({
+        position: center,
+        map: map
+    });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+  }
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfm6knLTKuEY_7LmZ-kPO-n2zz8MgiEX0&callback=initMap"></script>
+
+<script>
+    var app = new Vue({
+       el: "#rating-list",
+       data: {
+            reviews: [],
+       },
+       created: function() {
+           this.fetchReviews();
+       },
+       methods: {
+           fetchReviews : function(event) {
+                var page = 0;
+                if(event) {
+                    page = event.target.text;
+                    if (event.target.text === "First") {
+                        page = 1;
+                    } else if (event.target.text === "Last") {
+                        page = pagination.totalPages;
+                    } else {
+                        page = event.target.text;
+                    }
+                } else {
+                    page = 1;
+                }
+                
+                $.get(window.location.href + "/reviews?page=" + page, function(response) {
+                    pagination.showList = [];
+                    app.reviews = response.reviews;
+                    pagination.currentPage = response.currentPage;
+                    pagination.totalPages = response.totalPages;
+                    pagination.show = (Number(pagination.currentPage) > 5 ? Number(pagination.currentPage) - 4 : 1);
+                    var i = pagination.show;
+                    for(;i <= (Number(pagination.currentPage) + 4) && i <= pagination.totalPages; i++) {
+                        pagination.showList.push(i);
+                    }
+                    app.reviews.forEach(function(review){
+                      review.createdAt = moment(review.createdAt).fromNow();
+                    });
+                });
+           }
+       }
+    });
+    
+    var pagination = new Vue({
+        el: "#review-pagination",
+        data: {
+            currentPage: 0,
+            totalPages: 0,
+            show: 0,
+            showList: []
+        },
+        methods: {
+            fetchReviews: function(event) {
+                app.fetchReviews(event);
+            }
+        }
+    })
+    
+    
+</script> 

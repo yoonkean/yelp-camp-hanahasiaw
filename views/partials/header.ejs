@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>YelpCamp</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/starability/2.4.2/starability-css/starability-basic.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+        <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Hind:500,700" rel="stylesheet">
+        <link rel="stylesheet" href="/stylesheets/main.css">
+    </head>
+    <body>
+        
+        <nav class="navbar navbar-default nav-white navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">
+                        YelpCamp
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="active"><a href="/campgrounds">Discover</a></li>
+                        <li><a href="#">About</a></li>
+                        <li>
+                            <form class="navbar-form navbar-left navbar-search" action="/campgrounds" method="GET">
+                                <button class="fas fa-search"></button>
+                                 <input type="search" placeholder="Search campgrounds" name="search">
+                            </form>
+                        </li>
+                    </ul>
+                    
+                        
+                    <ul class="nav navbar-nav navbar-right">
+                        <% if(!currentUser) { %>
+                            <li><a href="/login">Login</a></li>
+                            <li id="signup-divider"><a class="btn btn-md btn-default" href="/register">Sign Up</a></li>
+                        <% } else { %>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <img class="img-circle" id="profile-image-sm" src="<%=currentUser.avatarUrl%>"><%= currentUser.username %> <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="/users/<%= currentUser._id %>/profile">My Profile</a>
+                                    </li>
+                                    <li><a href="/logout">Logout</a></li>
+                                </ul>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        

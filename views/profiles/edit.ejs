@@ -1,0 +1,78 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Edit Profile</h1>
+            <hr>
+        </div>
+    </div>
+    
+    <form id="profile-edit" class="form-horizontal" action="/users/<%= currentUser._id %>/profile?_method=PUT" method="POST" enctype="multipart/form-data">
+        <% include ../partials/flash %>
+        <div id="profile-detail" class="row">
+            <div class="col-md-3">
+                <div id="profile-avatar-edit">
+                    <img id="image_upload_preview" class="img-circle profile-image" src="<%= currentUser.avatarUrl %>" alt="your image" />
+                    <div id="profile-avatar-edit-pencil">
+                        <input id="profile-avatar" type="file" name="avatar" style="display: none">
+                        <label for="profile-avatar"><i class="fas fa-pencil-alt"></i></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <form id="profile-edit" class="form-horizontal" action="/users/<%= currentUser._id %>/profile?_method=PUT" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                        <label for="profile-username" class="col-sm-2 control-label">Username</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" value="<%= currentUser.username %>" disabled>
+                        </div>    
+                </div>
+                    <div class="form-group">
+                        <label id="profile-fname" class="col-sm-2 control-label">First Name</label>
+                        <div id="fname" class="col-md-4">
+                                <input class="form-control" type="text" value="<%= currentUser.firstname %>" name="profile[firstname]">
+                        </div>
+                        <label id="profile-lname" class="col-sm-2 control-label">Last Name</label>
+                        <div class="col-md-4">
+                                <input class="form-control" type="text" value="<%= currentUser.lastname %>" name="profile[lastname]">
+                        </div>
+                </div>
+                 <div class="form-group">
+                        <label for="profile-email" class="col-sm-2 control-label">Email</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" value="<%= currentUser.email %>" name="profile[email]">
+                        </div>    
+                </div>
+               <div class="form-group">
+                        <div class="col-md-2"></div>   
+                        <div class="col-md-3">
+                          <button class="btn btn-md btn-success form-control">Save Changes</button>  
+                        </div>
+                         <div class="col-md-3">
+                            <a href="/users/<%= currentUser._id %>/profile" class="btn btn-md btn-danger form-control">Cancel</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+</div>
+
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image_upload_preview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#profile-avatar").change(function () {
+        readURL(this);
+    });
+</script>
+
+<% include ../partials/footer %>

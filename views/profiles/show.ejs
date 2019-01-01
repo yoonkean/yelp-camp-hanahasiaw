@@ -1,0 +1,182 @@
+<% include ../partials/header %>
+
+<div class="container profile-container">
+    <% include ../partials/flash %>
+    <div class="row">
+        <div class="col-md-12">
+            <h1><%= profile.username %>'s Profile</h1>
+            <hr>
+        </div>
+    </div>
+    
+    <div id="profile-detail" class="row">
+        <div class="col-md-3">
+            <img class="img-circle profile-image" src="<%= profile.avatarUrl %>">
+        </div>
+        <div class="col-md-8">
+            <table id="profile-table">
+                <tr class="profile-table-row">
+                    <th class="table-label"><p>Username:</p></td>
+                    <td><p><%= profile.username%></p></td>
+                </tr>
+                <tr class="profile-table-row">
+                    <th class="table-label"><p>Name:</p></p></td>
+                    <td><p><%= profile.firstname%> <%= profile.lastname%></p></p></td>
+                </tr>
+                <tr class="profile-table-row">
+                    <th class="table-label"><p>Email:</p></p></td>
+                    <td><p><%= profile.email %></p></td>
+                </tr>
+            </table>
+        </div>
+        <% if (currentUser) { %>
+            <% if(currentUser._id.equals(profile._id)) { %>
+                <span><a href="/users/<%= currentUser.id%>/profile/edit" class="pull-right"><i class="fas fa-cog"></i>Settings</a></span>
+            <% } %>
+        <% } %>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Campgrounds Posted
+            <% if(currentUser) { %> 
+                <% if(currentUser._id.equals(profile._id)) { %>
+                    <button id="new-camp-form" class="fas fa-plus-circle" role="button"></button></h3>
+                <% } %>
+            <% } %>
+        </div>
+    </div>
+    
+    <hr>
+    
+    <div id="campgroundObj" class="row text-center">
+        <div v-if="campgroundList.length < 1" class="col-md-12">
+                    <h3>No campground match your search, please try again.</h3>
+        </div>
+        <div v-else class="col-md-12"  style="display: flex; flex-wrap: wrap">
+            <div v-for="campground in campgroundList" class="col-md-3">
+                <div class="thumbnail">
+                    <img class="profile-camp-image" v-bind:src="campground.image">
+                    <div class="caption">
+                        <h4>{{ campground.name }}</h4>
+                         <span v-if="campground.rating <= 0">No reviews yet.</span>
+                            <template v-else>
+                            <span class="fas fa-star checked"></span>
+                                <span v-if="campground.rating > 1.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                <span v-if="campground.rating > 2.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                <span v-if="campground.rating > 3.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                <span v-if="campground.rating > 4.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                        </template>
+                    </div>
+                    <p>
+                        <a v-bind:href="'/campgrounds/' + campground._id" class="btn btn-primary">More Info</a>
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+        <nav>
+            <ul v-if="totalPages > 0" class="pagination pagination-sm">
+                <li v-if="currentPage == 1" class="disabled"><a>First</a></li>
+                <li v-else><a v-bind:href="'/users/' + profileId + '/profile?page=1&per_page=12'">First</a></li>
+                <li v-if="show !== 1"><a>...</a></li>
+                <template v-for="item in showList">
+                    <li v-if="item == currentPage" class="active" ><a v-bind:href="'/users/' + profileId + '/profile?page=' + item + '&per_page=12'">{{ item }}</a></li>
+                    <li v-else><a v-bind:href="'/users/' + profileId + '/profile?page=' + item + '&per_page=12'">{{ item }}</a></li>
+                    <li v-if="item == Number(currentPage)+4 && item < totalPages" class="disabled"><a>...</a></li>
+                </template>
+                <li v-if="currentPage == totalPages" class="disabled"><a>Last</a></li>
+                <li v-else><a v-bind:href="'/users/' + profileId + '/profile?page=' + totalPages +'&per_page=12'">Last</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="form-popup">
+        <div class="form-wrapper">
+            <button id="new-camp-close-form" class="fas fa-times pull-right"></button>
+            <div class="row">
+                <h1 style="text-align: center;">Create a new campground</h1>
+                <div class="form-center">
+                    <form action="/campgrounds" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="campName">Campground Name</label>
+                            <input id="campName" class="form-control" type="text" name="name" placeholder="Night Light Camp">
+                        </div>
+                        <div class="form-group">
+                            <label for="campPrice">Price</label>
+                            <input id="campPrice" class="form-control" type="number" name="price" placeholder="$190.00" min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="campLocation">Location</label>
+                            <input id="campLocation" class="form-control" type="text" name="location" placeholder="3 Hill Place, Toronto, ON M6C 3E4, Canada">
+                        </div>
+                         <div class="form-group">
+                            <label for="campDesp">Description</label>
+                            <textarea type="text" id="campDesp" class="form-control" name="description" placeholder="A summary of the campground"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="imageFile">Upload Campground Image:</label>
+                            <input id="imageFile" type="file" name="image" accept="image/*" required>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-lg btn-primary btn-block">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    
+    var campgroundObj = new Vue({
+       el: "#campgroundObj",
+       data: {
+            currentPage: <%= currentPage %>,
+            totalPages: <%= totalPages %>,
+            campgroundList: <%- JSON.stringify(campgrounds) %>,
+            profileId: <%- JSON.stringify(profile._id) %>,
+            show: 0,
+            showList: []
+       },
+       created: function() {
+           this.calcPagination();
+       },
+       methods: {
+           calcPagination : function() {
+               this.show = (Number(this.currentPage) > 5 ? Number(this.currentPage) - 4 : 1);
+               var i = this.show;
+               for(;i <= (Number(this.currentPage) + 4) && i <= this.totalPages; i++) {
+                    this.showList.push(i);
+               }
+           }
+       }
+    });
+    
+    // Setup listener to open and close new campground pop-up form
+    $(document).ready(function() {
+    	$('#new-camp-form').click(function() {
+    		$('.form-popup').fadeIn("fast", function() {
+    		    
+    		});
+    	});
+    
+        $('#new-camp-close-form').click(function() {
+	    	$('.form-popup').hide();
+    	});
+
+    	$(document).mouseup(function(e) {
+    		var container = $(".form-wrapper");
+    		var form = $(".form-popup");
+    
+    		if (!container.is(e.target) && container.has(e.target).length === 0) {
+    			form.hide();
+    		}
+    	});
+    });
+</script>
+
+
+<% include ../partials/footer %>

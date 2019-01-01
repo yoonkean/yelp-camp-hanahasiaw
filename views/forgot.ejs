@@ -1,0 +1,36 @@
+<% include ./partials/header %>
+
+<div class="bg-wrap"></div>
+<div id="gen-form-container" class="container">
+    <div class="panel panel-default gen-form-wrapper">
+        <div class="panel-body">
+            <% include ./partials/flash %>
+            <% if(sentMessage) {%>
+                <div class="email-sent-img">
+                    <div class="email-img">
+                        <img src="https://vignette.wikia.nocookie.net/total-drama-fanon-site/images/a/ad/Envelope-icon.png/revision/latest?cb=20140430234257">
+                    </div>
+                    <div>
+                      <p><%= sentMessage %></p>  
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Reset password</h1>
+                        <hr>
+                    </div>
+                </div>
+                <form action="/forgot" method="POST">
+                    <div class="form-group">
+                         <label>Account Email Address:</label>
+                         <input class="form-control" type="email" name="email">
+                     </div>
+                     <button class="btn btn-primary btn-md">Send Password Reset Email</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<% include ./partials/footer %>

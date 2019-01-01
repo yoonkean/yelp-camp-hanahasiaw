@@ -1,0 +1,118 @@
+<% include ../partials/header %>
+    <div class="container">
+       <% include ../partials/flash %> 
+    </div>
+    <header id="main-image" class="jumbotron">
+                <div id="jumbotron-container" class="container">
+                    <h1><span><i class="fas fa-campground"></i></span> Welcome to YelpCamp</h1>
+                    <p>View our hand-picked campgrounds from all around the world</p>
+                    <p>
+                        <form action="/campgrounds" method="GET">
+                            <div class="input-group">
+                                <input id="main-search" class="form-control" type="text" name="search" placeholder="Search Campground">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default"><i class="fas fa-search"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </p>
+                </div>
+            </header>
+            
+    <div class="container">
+        
+            <div class="image-grid text-center">        
+              <% if(campgrounds.length < 1) {%>
+                    <div class="col-md-12">
+                        <h3>No campground match your search, please try again.</h3>
+                    </div>
+                <% } else { %>
+                <div class="col-md-12">
+                    <div id="campground-list"> 
+                        <div class="grid">
+                            <div v-for="campground in campgroundList">
+                                <div class="grid-item">
+                                    <div class="thumbnail">
+                                        <img v-bind:src="campground.image">
+                                        <div class="caption">
+                                            <h4>{{ campground.name }}</h4>
+                                            <span v-if="campground.rating <= 0">No reviews yet.</span>
+                                            <template v-else>
+                                                <span class="fas fa-star checked"></span>
+                                                <span v-if="campground.rating > 1.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                                <span v-if="campground.rating > 2.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                                <span v-if="campground.rating > 3.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                                <span v-if="campground.rating > 4.5" class="fas fa-star checked"></span><span v-else class="far fa-star"></span>
+                                            </template>
+                                        </div>
+                                        <p>
+                                            <a v-bind:href="'/campgrounds/' + campground._id" class="btn btn-primary small-link">More Info</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+
+   var campgroundObj = new Vue({
+    el: "#campground-list",
+    data: {
+        campgroundList: <%-JSON.stringify(campgrounds)%>
+    }
+    });
+
+    var page = 1;
+    var totalPages = <%= totalPages %>;
+    var ajaxInProgress = false;
+    $(window).scroll(function() {
+        if (ajaxInProgress === true)
+            return;
+
+        if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 200)){
+            ajaxInProgress = true;
+            if (page < totalPages) {
+                page++;
+                $.ajax({
+                   url: window.location.href,
+                   type: 'GET',
+                   data: {page: page, per_page: 12},
+                    success: function(response) {
+                        campgroundObj.campgroundList = campgroundObj.campgroundList.concat(response.campgrounds);
+                        $grid.imagesLoaded( function() {
+                            $grid.masonry('reloadItems').masonry();
+                            ajaxInProgress = false;
+                        });
+                    }
+                });   
+            }
+        }
+    });
+    
+    var mansoryOptions = {
+        itemSelector: '.grid-item',
+        transitionDuration: .2,
+        columnWidth: 0
+    }
+    
+    var $grid = $(".grid").masonry(mansoryOptions);
+    
+    
+    $grid.imagesLoaded().progress( function() {
+        $grid.masonry('layout');
+    });
+    
+
+    
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

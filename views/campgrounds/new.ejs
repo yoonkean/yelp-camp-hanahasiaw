@@ -1,0 +1,33 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center;">Create A New Campground</h1>
+        <div class="form-center">
+            <form action="/campgrounds" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="name" placeholder="Campground Name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="number" name="price" placeholder="Price" min="0.01" step="0.01">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="location" placeholder="Location">
+                </div>
+                 <div class="form-group">
+                    <input class="form-control" type="text" name="description" placeholder="Description">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-lg btn-primary btn-block">Submit</button>
+                </div>
+                 <div class="form-group">
+                    <label for="imageFile">Upload image:</label>
+                    <input id="imageFile" type="file" name="image" accept="image/*" required>
+                </div>
+            </form>
+            <a href="/users/<%= currentUser.id %>/profile">Go Back</a>
+        </div>
+    </div>
+</div>
+
+<% include ../partials/footer %>

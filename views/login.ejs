@@ -1,0 +1,29 @@
+<% include ./partials/header %>
+
+<div class="bg-wrap"></div>
+<div id="gen-form-container" class="container">
+   <div class="panel panel-default gen-form-wrapper">
+       <div class="panel-body">
+           <% include ./partials/flash %>
+           <h1>Login</h1>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input class="form-control" type="text" name="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input class="form-control" type="password"  name="password">
+                </div>
+                <div class="form-group">
+                    <a href="/forgot">Forgot password?</a>
+                    <button class="btn btn-md btn-primary pull-right">Login</button>
+                </div>
+            </form>
+            <a id="signup-btn" class="btn btn-default btn-md form-control" href="/register">Need an account? Sign up now!</a>
+        </div>
+   </div>
+</div>
+
+<% include ./partials/footer %>
+
