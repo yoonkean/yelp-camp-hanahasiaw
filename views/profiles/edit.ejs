@@ -2,14 +2,13 @@
 
 <div class="container">
     <div class="row">
-        <% include ../partials/flash %> 
+        <% include ../partials/flash %>
         <div class="col-md-12">
             <h1>Edit Profile</h1>
             <hr>
         </div>
     </div>
-    <form id="profile-edit" action="/users/<%= currentUser._id %>/profile?_method=PUT" method="POST"
-        enctype="multipart/form-data">
+    <form id="profile-edit" action="/users/<%= currentUser._id %>/profile?_method=PUT" method="POST" enctype="multipart/form-data">
         <div class="col-md-3">
             <div id="profile-detail">
                 <div id="profile-avatar-edit">
@@ -22,8 +21,6 @@
                 </div>
             </div>
         </div>
-    </form>
-    <form action="/users/<%= currentUser._id %>/profile?_method=PUT" method="POST" enctype="multipart/form-data">
         <div id="profile-edit-main" class="col-md-8">
             <div class="form-group">
                 <label for="profile-username">Username</label>
@@ -56,6 +53,7 @@
     </div>
 </div>
 
+<% include ../partials/footer %>
 
 <script>
     function readURL(input) {
@@ -72,5 +70,3 @@
         readURL(this);
     });
 </script>
-
-<% include ../partials/footer %>

@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 var passport = require("passport");
 var User = require("../models/user");
-var async = require("async");
 var nodeMailer = require("nodemailer");
 var crypto = require("crypto");
 const { check, validationResult } = require('express-validator/check');

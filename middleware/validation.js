@@ -1,5 +1,5 @@
 var validationObj = {};
-const { check, validationResult } = require('express-validator/check');
+const { check } = require('express-validator/check');
 
 validationObj.register = [
     check('username').isLength({min: 5}).withMessage("Username must be longer than 5 characters"),
@@ -12,8 +12,14 @@ validationObj.profile = [
     ];
 
 validationObj.campground = [
-    check('price').isCurrency({digits_after_decimal: [2]}).withMessage("Please enter a valid price"),
-    check('description').isLength({min: 1, max: 500}).withMessage("Please enter a description for your campground.")
+    check('campground[name]').isLength({min: 1, max: 255}).withMessage("Please enter a name for your campground."),
+    check('campground[price]').isCurrency({digits_after_decimal: [2]}).withMessage("Please enter a valid price"),
+    check('campground[location]').isLength({min: 1, max: 255}).withMessage("Please enter a valid location."),
+    check('campground[description]').isLength({min: 1, max: 500}).withMessage("Please enter a description for your campground.")
     ];
 
-module.exports = validationObj;
+validationObj.comment = [
+    check('comment[text]').isLength({min: 1}).withMessage("Please enter your comment in the text area."),
+]
+
+module.exports = validationObj;7
