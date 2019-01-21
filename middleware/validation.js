@@ -22,4 +22,4 @@ validationObj.comment = [
     check('comment[text]').isLength({min: 1}).withMessage("Please enter your comment in the text area."),
 ]
 
-module.exports = validationObj;7
+module.exports = validationObj;

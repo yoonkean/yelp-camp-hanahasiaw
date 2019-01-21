@@ -56,10 +56,24 @@ router.post("/", middleware.isLoggedIn, async function(req, res) {
     }
 });
 
+function calculateAverage(reviews) {
+    var total = 0;
+    
+    if(reviews.length === 0) {
+        return 0;
+    }
+    
+    reviews.forEach(function(review) {
+        total += review.rating;
+    });
+    
+    return  total = total / reviews.length;
+}
+
 //EDIT ROUTE
-router.get("/:review_id/edit",function(req, res) {
-    res.render("reviews/edit", {campground_id: req.params.id, review_id: req.params.review_id});
-});
+// router.get("/:review_id/edit",function(req, res) {
+//     res.render("reviews/edit", {campground_id: req.params.id, review_id: req.params.review_id});
+// });
 
 //USER shouldn't be allowed to delete their own review. This feature will be back for admin use.
 // //DELETE ROUTE
@@ -90,19 +104,5 @@ router.get("/:review_id/edit",function(req, res) {
 //         req.flash("error", "Something went wrong. Please try again later.");
 //     }
 // });
-
-function calculateAverage(reviews) {
-    var total = 0;
-    
-    if(reviews.length === 0) {
-        return 0;
-    }
-    
-    reviews.forEach(function(review) {
-        total += review.rating;
-    });
-    
-    return  total = total / reviews.length;
-}
 
 module.exports = router;
