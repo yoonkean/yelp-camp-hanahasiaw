@@ -1,63 +1,28 @@
-//==============================
-// Libraries
-//==============================
 require('dotenv').config();
+require("nodemon");
 var express = require("express");
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
-var passport = require("passport");
-var localStrategy = require("passport-local");
-var passportLocalMongoose = require("passport-local-mongoose");
 var methodOverride = require("method-override");
 var flash = require("connect-flash");
 var moment = require("moment");
-var nodemon = require("nodemon");
-
-//==============================
-// Models
-//==============================
-var Campground = require("./models/campground");
-var Comment = require("./models/comment");
-var User = require("./models/user");
-
-
-//==============================
-// Routes
-//==============================
 var commentRoutes = require("./routes/comments");
 var campgroundRoutes = require("./routes/campgrounds");
 var authRoutes = require("./routes/index");
 var reviewRoutes = require("./routes/reviews");
 var profileRoutes = require("./routes/profiles");
-
-//Seeding database for development
 var seedDB = require("./seeds");
 
 var app = express();
 
-mongoose.connect("mongodb://localhost/yelp_camp", {useNewUrlParser: true});
+mongoose.connect(process.env.MONGO_DB_URL, {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
-//Setting passport up
-app.use(require("express-session")({
-   secret: "The secret to the campground world",
-   resave: false,
-   saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new localStrategy(User.authenticate()));
-
-//Setting up configurations required for reading/encoding/decoding sessions
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-//seedDB();
+require("./auth")(app);
 
 //Call this middleware for every single route
 app.use(function(req, res, next) {
