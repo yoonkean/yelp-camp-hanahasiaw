@@ -1,73 +1,83 @@
 var express = require("express");
-var router = express.Router({mergeParams: true});
+var router = express.Router({ mergeParams: true });
 var Campground = require("../models/campground");
 var Review = require("../models/review");
 var middleware = require("../middleware");
+var moment = require("moment");
 
 //NEW
 router.get("/new", middleware.isLoggedIn, function(req, res) {
-   res.render("reviews/new", {campground_id: req.params.id});
+  res.render("reviews/new", { campground_id: req.params.id });
 });
 
 //SHOW
 router.get("/", async function(req, res) {
-    try {
-        var count = 5;
-        var page = req.query.page || 1;
-        var offset = (count * page) - count;
-        
-        var foundReviews = await Review.find({})
-            .skip(offset)
-            .limit(count)
-            .sort({createdAt: -1})
-            .populate({
-                path: 'author.id',
-                model: 'User'
-            }).where("campground").equals(req.params.id);
-            
-        var total = await Review.countDocuments({campground: req.params.id});
-        var totalPages = Math.ceil(total/count);
-        res.send({reviews: foundReviews, currentPage: page, totalPages: totalPages});
-    } catch (error) {
-        console.log(error);    
-    }
+  try {
+    var count = 5;
+    var page = req.query.page || 1;
+    var offset = count * page - count;
+
+    var foundReviews = await Review.find({})
+      .skip(offset)
+      .limit(count)
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "author.id",
+        model: "User"
+      })
+      .where("campground")
+      .equals(req.params.id);
+
+    var total = await Review.countDocuments({ campground: req.params.id });
+    var totalPages = Math.ceil(total / count);
+    res.send({
+      reviews: foundReviews,
+      currentPage: page,
+      totalPages: totalPages,
+      moment: moment()
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //CREATE
 router.post("/", middleware.isLoggedIn, async function(req, res) {
-    try {
-        var foundCampground = await Campground.findById(req.params.id).populate("reviews");
-        var newReview = await Review.create(req.body.review);
+  try {
+    var foundCampground = await Campground.findById(req.params.id).populate(
+      "reviews"
+    );
+    var newReview = await Review.create(req.body.review);
 
-        newReview.author.id = req.user._id;
-        newReview.author.username = req.user.username;
-        newReview.campground = foundCampground;
-        newReview.save();
+    newReview.author.id = req.user._id;
+    newReview.author.username = req.user.username;
+    newReview.campground = foundCampground;
+    newReview.save();
 
-        foundCampground.reviews.push(newReview);
-        foundCampground.rating = calculateAverage(foundCampground.reviews);
-        foundCampground.save();
+    foundCampground.reviews.push(newReview);
+    foundCampground.rating = calculateAverage(foundCampground.reviews);
+    foundCampground.save();
 
-        req.flash("success", "Your review has been successfully added ");
-    } catch (error) {
-        req.flash("error", "Something went wrong. Please try again later.");
-    } finally {
-        res.redirect("/campgrounds/" + req.params.id);
-    }
+    req.flash("success", "Your review has been successfully added ");
+  } catch (error) {
+    req.flash("error", "Something went wrong. Please try again later.");
+  } finally {
+    res.redirect("/campgrounds/" + req.params.id);
+  }
 });
 
 function calculateAverage(reviews) {
-    var total = 0;
-    
-    if(reviews.length === 0) {
-        return 0;
-    }
-    
-    reviews.forEach(function(review) {
-        total += review.rating;
-    });
-    
-    return  total = total / reviews.length;
+  var total = 0;
+
+  if (reviews.length === 0) {
+    return 0;
+  }
+
+  reviews.forEach(function(review) {
+    total += review.rating;
+  });
+
+  return (total = total / reviews.length);
 }
 
 //EDIT ROUTE

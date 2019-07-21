@@ -1,6 +1,6 @@
 <% include ../partials/header %>
     <div class="container">
-       <% include ../partials/flash %> 
+       <% include ../partials/flash %>
     </div>
     <header id="main-image" class="jumbotron">
                 <div id="jumbotron-container" class="container">
@@ -18,17 +18,15 @@
                     </p>
                 </div>
             </header>
-            
     <div class="container">
-        
-            <div class="image-grid text-center">        
+            <div class="image-grid text-center">
               <% if(campgrounds.length < 1) {%>
                     <div class="col-md-12">
                         <h3>No campground match your search, please try again.</h3>
                     </div>
                 <% } else { %>
                 <div class="col-md-12">
-                    <div id="campground-list"> 
+                    <div id="campground-list">
                         <div class="grid">
                             <div v-for="campground in campgroundList">
                                 <div class="grid-item">
@@ -91,26 +89,22 @@
                             ajaxInProgress = false;
                         });
                     }
-                });   
+                });
             }
         }
     });
-    
+
     var mansoryOptions = {
         itemSelector: '.grid-item',
         transitionDuration: .2,
         columnWidth: 0
     }
-    
+
     var $grid = $(".grid").masonry(mansoryOptions);
-    
-    
+
     $grid.imagesLoaded().progress( function() {
         $grid.masonry('layout');
     });
-    
-
-    
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

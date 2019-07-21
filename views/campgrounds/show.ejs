@@ -53,7 +53,7 @@
                                     <span v-if="review.rating > 2.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
                                     <span v-if="review.rating > 3.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
                                     <span v-if="review.rating > 4.5" class="fas fa-star icon-sm checked"></span><span v-else class="far fa-star icon-sm"></span>
-                                    <span class="timestamp">{{ review.createdAt }}</span>
+                                    <span class="timestamp">{{ review.createdAt}}</span>
                                     <div>Review By: <strong>{{ review.author.username }}</strong></div>
                                 </div>
                                 <div :id="'rating-option' + review._id"  class="col-md-8">
