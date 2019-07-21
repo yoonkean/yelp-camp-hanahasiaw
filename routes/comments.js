@@ -1,74 +1,62 @@
 var express = require("express");
-var router = express.Router({mergeParams: true});
+var router = express.Router({ mergeParams: true });
 var Campground = require("../models/campground");
 var Comment = require("../models/comment");
 var middleware = require("../middleware");
-
-// NEW ROUTE - Display Form to Create New comment
-router.get("/new", middleware.isLoggedIn, function(req, res) {
-   Campground.findById(req.params.id, function(err, campground) {
-      if(err) {
-         console.log(err);
-      } else {
-            res.render("comments/new", {campground: campground});
-      }
-   });
-});
+const { validationResult } = require('express-validator/check');
+var validation = require("../middleware/validation");
 
 // CREATE ROUTE - Add new comment into DB and associate it with campground
-router.post("/", middleware.isLoggedIn, function(req, res) {
-   Campground.findById(req.params.id, function(err, campground) {
-      if(err) {
-         req.flash("error", "Something went wrong");
-         console.log(err);
-      } else {
-         Comment.create(req.body.comment, function(err, comment) {
-            if(err) {
-               console.log(err);
-            } else {
-               //add username and id to comment
-               comment.author.id = req.user._id;
-               comment.author.username = req.user.username;
-               comment.save();
-               
-               campground.comments.push(comment);
-               campground.save();
-               req.flash("success", "Successfully added comment");
-               res.redirect("/campgrounds/" + campground._id);
-            }
-         });
-      }
-   });
-});
+router.post("/", middleware.isLoggedIn, validation.comment, async function (req, res) {
+	if (!validationResult(req).isEmpty()) {
+		var validationError = validationResult(req).array()
+		req.flash("errorList", validationError);
+		return res.redirect('back');
+	}
 
-//EDIT ROUTE
-router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, res) {
-      res.render("comments/edit", {campground_id: req.params.id, comment: req.comment});   
+	try {
+		var foundCampground = await Campground.findById(req.params.id);
+		var newComment = await Comment.create(req.body.comment);
+
+		newComment.author.id = req.user._id;
+		newComment.author.username = req.user.username;
+		newComment.save();
+
+		foundCampground.comments.push(newComment);
+		foundCampground.save();
+
+		req.flash("success", "Successfully added comment");
+	} catch (error) {
+		req.flash("error", "Something went wrong");
+	} finally {
+		res.redirect('/campgrounds/' + req.params.id);
+	}
+
 });
 
 //UPDATE ROUTE
-router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res) {
-   req.body.comment.createdAt = Date.now();
-   Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment) {
-      if(err) {
-         res.redirect("back");
-      } else {
-         res.redirect("/campgrounds/" + req.params.id);
-      }
-   });
+router.put("/:comment_id", middleware.checkCommentOwnership, validation.comment, async function (req, res) {
+	try {
+		req.body.comment.createdAt = Date.now();
+		await Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment);
+		req.flash("success", "Successfully updated comment");
+	} catch (error) {
+		req.flash("error", "Something went wrong");
+	} finally {
+		res.redirect("/campgrounds/" + req.params.id);
+	}
 });
 
 //DESTROY ROUTE
-router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, res) {
-   Comment.findByIdAndRemove(req.params.comment_id, function(err) {
-      if(err) {
-         res.redirect("back")
-      } else {
-         req.flash("success", "Comment deleted successfully");
-         res.redirect("back");
-      }
-   });
+router.delete("/:comment_id", middleware.checkCommentOwnership, async function (req, res) {
+	try {
+		await Comment.findByIdAndRemove(req.params.comment_id);
+		req.flash("success", "Comment deleted successfully");
+	} catch (error) {
+		req.flash("error", "Something went wrong");
+	} finally {
+		res.redirect("back")
+	}
 });
-
 
 module.exports = router;
