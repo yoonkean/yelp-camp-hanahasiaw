@@ -16,7 +16,14 @@ var seedDB = require("./seeds");
 var app = express();
 
 var databaseUrl = process.env.DATABASE_URL || process.env.LOCAL_DB_URL;
-mongoose.connect(databaseUrl, { useNewUrlParser: true });
+mongoose.connect(databaseUrl, {
+  useNewUrlParser: true,
+  useCreateIndex: true
+}).then(() => {
+  console.log("Connected to Database.")
+}).catch((error) => {
+  console.log("Error:", error);
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
