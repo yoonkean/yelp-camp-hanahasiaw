@@ -15,7 +15,7 @@ validationObj.campground = [
 	check('campground[name]').isLength({ min: 1, max: 255 }).withMessage("Please enter a name for your campground."),
 	check('campground[price]').isCurrency({ digits_after_decimal: [2] }).withMessage("Please enter a valid price"),
 	check('campground[location]').isLength({ min: 1, max: 255 }).withMessage("Please enter a valid location."),
-	check('campground[description]').isLength({ min: 1, max: 500 }).withMessage("Please enter a description for your campground.")
+	check('campground[description]').isLength({ min: 1, max: 1500 }).withMessage("Please enter a description for your campground.")
 ];
 
 validationObj.comment = [
