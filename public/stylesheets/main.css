@@ -91,7 +91,7 @@ body {
 
 .navbar-default.nav-white .navbar-nav > li > a {
     color: #999;
-    font-size: 16px;    
+    font-size: 16px;
 }
 
 .navbar-default .navbar-brand,
@@ -121,7 +121,7 @@ body {
 .nav.navbar-nav.navbar-right > li#signup-divider {
     border-left: 0.1px #999 solid;
     padding-left: 5px;
-    
+
 }
 
 .nav.navbar-nav.navbar-right > li#signup-divider > .btn{
@@ -129,7 +129,7 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
-   
+
 .thumbnail img {
     width: 100%;
 }
@@ -211,7 +211,7 @@ body {
     font-weight: normal;
     text-align: center;
     padding-top: 8px;
-    z-index: 1px; 
+    z-index: 1px;
     box-shadow: 0px 4px 6px 2px rgba(0, 0, 0, 0.12);
     cursor: pointer;
 }
@@ -347,7 +347,7 @@ form > .col-md-6 {
 
 .whitespace {
     font-size: 5px;
-    margin: 7px 3px; 
+    margin: 7px 3px;
 }
 
 .clear-buttom-margin {
@@ -415,7 +415,7 @@ form > .col-md-6 {
 .grid-item {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  box-sizing: border-box;    
+  box-sizing: border-box;
   width: 100%;
   padding: 5px 5px 5px 5px;
 }
@@ -424,7 +424,7 @@ form > .col-md-6 {
     .grid-item {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
-      box-sizing: border-box;    
+      box-sizing: border-box;
       width: 50%;
       padding: 5px 5px 5px 5px;
     }
@@ -434,7 +434,7 @@ form > .col-md-6 {
     .grid-item {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
-      box-sizing: border-box;    
+      box-sizing: border-box;
       width: 33.3%;
       padding: 5px 5px 5px 5px;
     }
@@ -532,6 +532,38 @@ form > .col-md-6 {
     background: none;
 }
 
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+    background-color: white;
+}
+
+.nav-icon {
+    margin: 1em;
+    width: 40px;
+}
+
+.nav-icon:after,
+.nav-icon:before,
+.nav-icon span {
+  background-color: #999;
+  border-radius: 3px;
+  content: '';
+  display: block;
+  height: 3px;
+  margin: 3px 0;
+  transition: all .2s ease-in-out;
+}
+
+.nav-icon:hover:before {
+    transform: translateY(6px) rotate(135deg);
+}
+
+.nav-icon:hover:after {
+    transform: translateY(-6px) rotate(-135deg);
+}
+
+.nav-icon:hover span {
+    transform: scale(0);
+}
 
 @media screen and (max-width: 1250px) {
     .navbar-search > input[type=search] {
@@ -573,7 +605,7 @@ form > .col-md-6 {
 
 .well.comment-well {
     background-color: white;
-    
+
 }
 
 #review-wrapper {
