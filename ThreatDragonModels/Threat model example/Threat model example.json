@@ -1,0 +1,11 @@
+{
+  "summary": {
+    "title": "Threat model example",
+    "owner": "YK",
+    "description": "This is a nodejs web application built using express"
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": []
+  }
+}
